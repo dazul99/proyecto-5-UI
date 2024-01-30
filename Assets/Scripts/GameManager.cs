@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,15 +13,26 @@ public class GameManager : MonoBehaviour
     private float distance = 2.5f;
 
     private bool isgameover = false;
-    private float spawnrate = 0.5f;
+    private float spawnrate = 1f;
     private Vector3 randompos;
     public List<Vector3> spawnlist = new List<Vector3>();
+
+    private int score;
+
+    private int lives;
+
+    private UIManager uiManager;
+
+    private int tim = 200;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SpawnTarget());
+        uiManager = FindObjectOfType<UIManager>();
+        uiManager.Hidepanel();
+        uiManager.Showmainmenu();
+
     }
 
     private Vector3 Spawnpos()
@@ -46,6 +58,71 @@ public class GameManager : MonoBehaviour
             spawnlist.Add(randompos);
             Instantiate(targetprefabs[obj], randompos, targetprefabs[obj].transform.rotation);
         }
+    }
+
+    public void UpdateScore(int points)
+    {
+        score += points;
+        uiManager.Updatescoretext(score);
+    }
+
+    public void UpdateLives(bool hurt = true)
+    {
+        if(hurt)
+        {
+            lives--;
+        }
+
+        if (lives == 0) gameover();
+        uiManager.Updatelivestext(lives);
+    }
+
+    public bool IsGameover()
+    {
+        return isgameover;
+    }
+
+    private void gameover()
+    {
+        isgameover = true;
+        uiManager.Updatefinal(score, tim);
+    }
+
+    private IEnumerator Updatetime()
+    {
+        while (!isgameover)
+        {
+            uiManager.Updatetimetext(tim);
+            yield return new WaitForSeconds(1);
+            tim--;
+            if(tim <= 0) 
+            { 
+                gameover();
+            }
+        }
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+
+    //dif 1 = Easy, dif 2 = medium, dif 3 = hard
+    public void Startgame(int dif)
+    {
+
+        uiManager.hidemainmenu();
+
+        spawnrate /= dif;
+        tim = tim / dif;
+        score = 0;
+        UpdateScore(0);
+        lives = 3;
+        UpdateLives(false);
+
+        StartCoroutine(Updatetime());
+        StartCoroutine(SpawnTarget());
     }
 
     // Update is called once per frame
