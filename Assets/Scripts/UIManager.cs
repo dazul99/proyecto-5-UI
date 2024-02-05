@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -17,11 +18,35 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject panel;
     [SerializeField] private GameObject timeup;
     [SerializeField] private GameObject mainmenu;
+    [SerializeField] private GameObject pause;
 
     [SerializeField] private TextMeshProUGUI timetext;
 
+    [SerializeField] private Button easy;
+    [SerializeField] private Button medium;
+    [SerializeField] private Button hard;
+
+    [SerializeField] private Button retrygood;
+
+    [SerializeField] private Button retrybad;
+
+    [SerializeField] private Button conti;
+    [SerializeField] private Button giveup;
+
+    [SerializeField] private Button pausebutton;
+
+    private GameManager gamemanager;
     private void Start()
     {
+        gamemanager = FindObjectOfType<GameManager>();
+        easy.onClick.AddListener(() => { gamemanager.Startgame(1); });
+        medium.onClick.AddListener(() => { gamemanager.Startgame(2); });
+        hard.onClick.AddListener(() => { gamemanager.Startgame(4); });
+        retrygood.onClick.AddListener(() => { gamemanager.Restart(); });
+        retrybad.onClick.AddListener(() => { gamemanager.Restart(); });
+        giveup.onClick.AddListener(() => { Time.timeScale = 1; gamemanager.Restart(); });
+        conti.onClick.AddListener(() => { gamemanager.Unpause(); });
+        pausebutton.onClick.AddListener(() => { gamemanager.Pause(); });
     }
 
     public void Updatescoretext(int score)
@@ -70,6 +95,7 @@ public class UIManager : MonoBehaviour
     {
         panel.SetActive(false);
         timeup.SetActive(false);
+        pause.SetActive(false);
     }
 
     public void Showmainmenu()
@@ -86,5 +112,15 @@ public class UIManager : MonoBehaviour
     {
         timetext.text = @"Timer
 " + tim;
+    }
+
+    public void Pausemenu()
+    {
+        pause.SetActive(true);
+    }
+
+    public void Escapepause()
+    {
+        pause.SetActive(false);
     }
 }

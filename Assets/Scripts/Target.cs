@@ -30,7 +30,7 @@ public class Target : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!gameManager.IsGameover())
+        if (!gameManager.IsGameover() && !gameManager.paused)
         {
             Instantiate(particles, transform.position, Quaternion.identity);
             gameManager.UpdateScore(points);

@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
 
     private int tim = 200;
 
+    private int difficulty;
+
+    public bool paused = false;
 
     // Start is called before the first frame update
     void Start()
@@ -111,7 +114,7 @@ public class GameManager : MonoBehaviour
     //dif 1 = Easy, dif 2 = medium, dif 3 = hard
     public void Startgame(int dif)
     {
-
+        difficulty = dif;
         uiManager.hidemainmenu();
 
         spawnrate /= dif;
@@ -125,9 +128,28 @@ public class GameManager : MonoBehaviour
         StartCoroutine(SpawnTarget());
     }
 
+
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!paused) Pause();
+            else Unpause();
+        }
+    }
 
+    public void Unpause()
+    {
+        uiManager.Escapepause();
+        Time.timeScale = 1;
+        paused = !paused;
+    }
+
+    public void Pause()
+    {
+        uiManager.Pausemenu();
+        Time.timeScale = 0;
+        paused = !paused;
     }
 }
